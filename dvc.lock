@@ -1,0 +1,69 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python3 scripts/preprocess.py
+    deps:
+    - path: data/raw/data.csv
+      hash: md5
+      md5: 063b61ccc109ecbf6f4591eae4aa0b25
+      size: 133033
+    - path: scripts/preprocess.py
+      hash: md5
+      md5: b333d0a29d0c2d72d8dc03f50443e76b
+      size: 860
+    params:
+      params.yaml:
+        preprocess:
+          test_split: 0.2
+          random_state: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: a708dd0fcc7fc17f38cbead631333ad5
+      size: 27734
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 4b6f6370cdfef6a254fd74fdbd95f6e9
+      size: 105791
+  train:
+    cmd: python3 scripts/train.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 4b6f6370cdfef6a254fd74fdbd95f6e9
+      size: 105791
+    - path: scripts/train.py
+      hash: md5
+      md5: c09d3f01b61da1d74dd5db462ef8f6c3
+      size: 774
+    params:
+      params.yaml:
+        train:
+          n_estimators: 200
+          max_depth: 10
+          random_state: 42
+    outs:
+    - path: models/classifier.pkl
+      hash: md5
+      md5: edb38f9edc704de5b69201925c59b18c
+      size: 710765
+  evaluate:
+    cmd: python3 scripts/evaluate.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: a708dd0fcc7fc17f38cbead631333ad5
+      size: 27734
+    - path: models/classifier.pkl
+      hash: md5
+      md5: edb38f9edc704de5b69201925c59b18c
+      size: 710765
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: 61c2161c5c0a6b53183444c9d051f54a
+      size: 783
+    outs:
+    - path: metrics/scores.json
+      hash: md5
+      md5: 57bde6d94ae68f325553ca0970accd4f
+      size: 131
